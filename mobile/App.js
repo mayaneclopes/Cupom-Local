@@ -1,74 +1,89 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, FlatList, Button, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import axios from 'axios';
+import { enableScreens } from 'react-native-screens';
+enableScreens(); 
+const API_URL = 'http://10.0.2.2:3000'; // Para emulador Android
 
-const API_URL = 'http://SEU_IP:3000'; // Substitua pelo IP real
-
-export default function App() {
+export default function Home() {
   const [cupons, setCupons] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchCupons = async () => {
     try {
-      const response = await fetch(`${API_URL}/cupons`);
-      const data = await response.json();
-      setCupons(data);
+      const response = await axios.get(`${API_URL}/cupons`);
+      setCupons(response.data);
     } catch (error) {
-      Alert.alert('Erro', 'Não foi possível carregar os cupons');
+      Alert.alert('Erro', error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const addTestCupom = async () => {
+  const resgatarCupomSimulado = async () => {
     try {
-      await fetch(`${API_URL}/cupons`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          nome: "Desconto Teste",
-          desconto: 20,
-          estabelecimento: "Loja Exemplo"
-        }),
+      await axios.post(`${API_URL}/cupons`, {
+        nome: "Cupom Simulado",
+        desconto: 15,
+        estabelecimento: "Loja Parceira"
       });
-      fetchCupons();
+      await fetchCupons();
+      Alert.alert('Sucesso', 'Cupom resgatado!');
     } catch (error) {
-      Alert.alert('Erro', 'Falha ao criar cupom');
+      Alert.alert('Erro', error.message);
     }
   };
 
   useEffect(() => { fetchCupons(); }, []);
 
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#2A9D8F" />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      <Button title="Adicionar Cupom Teste" onPress={addTestCupom} />
+      <Text style={styles.titulo}>Cupons Disponíveis</Text>
       
+      <Button
+        title="➕ Simular Resgate"
+        onPress={resgatarCupomSimulado}
+        color="#2A9D8F"
+      />
+
       <FlatList
         data={cupons}
-        keyExtractor={item => item.id.toString()}
+        keyExtractor={item => item.id?.toString() || Math.random().toString()}
         renderItem={({ item }) => (
           <View style={styles.cupomCard}>
             <Text style={styles.cupomNome}>{item.nome}</Text>
-            <Text>Desconto: {item.desconto}%</Text>
-            <Text>Loja: {item.estabelecimento}</Text>
+            <Text style={styles.cupomDesconto}>🔖 {item.desconto}% OFF</Text>
+            <Text style={styles.cupomLoja}>🏪 {item.estabelecimento}</Text>
           </View>
         )}
+        contentContainerStyle={styles.lista}
+        ListEmptyComponent={
+          <Text style={styles.emptyText}>Nenhum cupom disponível</Text>
+        }
       />
     </View>
   );
 }
 
+// Estilos permanecem os mesmos que você já tinha
 const styles = StyleSheet.create({
-  container: {
+  // ... seus estilos atuais
+  loadingContainer: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#f5f5f5'
+    justifyContent: 'center',
+    alignItems: 'center'
   },
-  cupomCard: {
-    backgroundColor: 'white',
-    padding: 15,
-    marginBottom: 10,
-    borderRadius: 8,
-    elevation: 3 // Sombra alternativa para Android
-  },
-  cupomNome: {
-    fontWeight: 'bold',
-    fontSize: 16
+  emptyText: {
+    textAlign: 'center',
+    marginTop: 20,
+    color: '#6C757D'
   }
 });
