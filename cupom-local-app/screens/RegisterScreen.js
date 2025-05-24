@@ -1,37 +1,33 @@
-// screens/LoginFakeScreen.js
+// screens/RegisterScreen.js
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
 import axios from 'axios';
 
 const API_URL = 'http://192.168.0.15:3001';
 
-export default function LoginFakeScreen({ onLogin, navigation }) {
+export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     if (!email || !senha) {
       Alert.alert('Erro', 'Preencha email e senha');
       return;
     }
 
     try {
-      const resposta = await axios.post(`${API_URL}/auth/login`, {
-        email,
-        senha,
-      });
-
-      const { token } = resposta.data;
-      onLogin({ email, token }); // envia o token pra próxima tela
+      await axios.post(`${API_URL}/auth/register`, { email, senha });
+      Alert.alert('Cadastro realizado com sucesso');
+      navigation.goBack(); // volta para tela de login
     } catch (error) {
       console.error(error);
-      Alert.alert('Erro', error.response?.data?.erro || 'Erro ao fazer login');
+      Alert.alert('Erro', error.response?.data?.erro || 'Erro ao cadastrar');
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+      <Text style={styles.title}>Cadastro</Text>
 
       <TextInput
         placeholder="E-mail"
@@ -50,11 +46,7 @@ export default function LoginFakeScreen({ onLogin, navigation }) {
         secureTextEntry
       />
 
-      <Button title="Entrar" onPress={handleLogin}
-      styles={styles.container} />
-    
-      <Button title="Criar conta" onPress={() => navigation.navigate('Cadastro')} />
-
+      <Button title="Cadastrar" onPress={handleRegister} />
     </View>
   );
 }
