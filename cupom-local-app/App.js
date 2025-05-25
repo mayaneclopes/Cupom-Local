@@ -17,17 +17,17 @@ export default function App() {
       <Stack.Navigator>
         {user ? (
           <>
-            <Stack.Screen name="Cupons">
-              {(props) => (
-                <CupomListScreen
-                  {...props}
-                  user={user}
-                  onLogout={() => setUser(null)}
-                />
-              )}
-            </Stack.Screen>
+<Stack.Screen name="Cupons">
+  {(props) => (
+    <CupomListScreen
+      {...props}
+      user={user} 
+      onLogout={() => setUser(null)}
+    />
+  )}
+</Stack.Screen>
 
-            {/* ✅ Rota declarada com componente direto */}
+            {}
             <Stack.Screen name="Carrinho" component={CarrinhoScreen} />
           </>
         ) : (

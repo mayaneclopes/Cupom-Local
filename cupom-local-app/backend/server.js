@@ -51,7 +51,12 @@ app.post('/auth/login', (req, res) => {
       expiresIn: '2h'
     });
 
-    res.json({ mensagem: 'Login bem-sucedido', token, usuario_id: usuario.id });
+    res.json({
+  mensagem: 'Login bem-sucedido',
+  token,
+  usuario_id: usuario.id, 
+});
+
   });
 });
 
@@ -78,35 +83,42 @@ app.post('/carrinho', (req, res) => {
   const { usuario_id, cupom_id } = req.body;
 
   if (!usuario_id || !cupom_id) {
-    return res.status(400).json({ erro: 'Usuário e cupom obrigatórios' });
+    return res.status(400).json({ erro: 'Dados incompletos' });
   }
 
   const sql = 'INSERT INTO carrinho (usuario_id, cupom_id) VALUES (?, ?)';
-  db.query(sql, [usuario_id, cupom_id], (err, result) => {
-    if (err) {
-      console.error('Erro ao adicionar ao carrinho:', err);
-      return res.status(500).json({ erro: 'Erro ao adicionar ao carrinho' });
-    }
-    res.status(201).json({ mensagem: 'Adicionado ao carrinho com sucesso' });
+
+  db.query(sql, [usuario_id, cupom_id], (err) => {
+    if (err) return res.status(500).json({ erro: 'Erro ao adicionar ao carrinho' });
+    res.status(201).json({ mensagem: 'Adicionado com sucesso' });
   });
 });
+
 
 // Listar cupons do carrinho por usuário
 app.get('/carrinho/:usuario_id', (req, res) => {
-  const usuario_id = req.params.usuario_id;
+  const { usuario_id } = req.params;
 
   const sql = `
-    SELECT c.id, c.titulo, c.descricao, c.validade, c.valor
-    FROM carrinho AS car
-    JOIN cupons AS c ON car.cupom_id = c.id
-    WHERE car.usuario_id = ?
+    SELECT carrinho.id, cupons.titulo, cupons.descricao, cupons.validade
+    FROM carrinho
+    JOIN cupons ON cupons.id = carrinho.cupom_id
+    WHERE carrinho.usuario_id = ?
   `;
 
   db.query(sql, [usuario_id], (err, resultados) => {
-    if (err) {
-      console.error('Erro ao buscar carrinho:', err);
-      return res.status(500).json({ erro: 'Erro ao buscar carrinho' });
-    }
+    if (err) return res.status(500).json({ erro: 'Erro ao buscar carrinho' });
     res.json(resultados);
   });
 });
+
+//Deleta cupons do carrinho do usuário
+app.delete('/carrinho/:id', (req, res) => {
+  const { id } = req.params;
+
+  db.query('DELETE FROM carrinho WHERE id = ?', [id], (err) => {
+    if (err) return res.status(500).json({ erro: 'Erro ao remover do carrinho' });
+    res.json({ mensagem: 'Removido com sucesso' });
+  });
+});
+

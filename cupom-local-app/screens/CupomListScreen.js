@@ -3,9 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, Button, StyleSheet } from 'react-native';
 import axios from 'axios';
 
-const API_URL = 'http://192.168.0.15:3001'; 
+const API_URL = 'http://192.168.0.15:3001';
 
-export default function CupomListScreen({ user, onLogout, navigation }) {
+export default function CupomListScreen({ navigation, user, onLogout }) {
   const [cupons, setCupons] = useState([]);
   const [carrinho, setCarrinho] = useState([]);
 
@@ -15,57 +15,49 @@ export default function CupomListScreen({ user, onLogout, navigation }) {
       .catch(error => console.error('Erro ao buscar cupons:', error));
   }, []);
 
-  const adicionarAoCarrinho = (cupom) => {
-    if (!carrinho.find((item) => item.id === cupom.id)) {
-      setCarrinho([...carrinho, cupom]);
-    }
-  };
+ const adicionarAoCarrinho = async (cupom) => {
+  try {
+    console.log('Enviando:', {
+  usuario_id: user.id,
+  cupom_id: cupom.id
+});
 
-  const removerDoCarrinho = (id) => {
-    setCarrinho(carrinho.filter((item) => item.id !== id));
-  };
+    await axios.post(`${API_URL}/carrinho`, {
+      usuario_id: user.id,
+      cupom_id: cupom.id,
+    });
+
+    alert('Cupom adicionado ao carrinho!');
+  } catch (error) {
+    console.error(error);
+    alert('Erro ao adicionar ao carrinho');
+  }
+};
 
   return (
-    <View style={estilos.container}>
-      <Text style={estilos.titulo}>Cupons Disponíveis</Text>
+    <View style={styles.container}>
+      <Text style={styles.titulo}>Cupons Disponíveis</Text>
 
       <FlatList
         data={cupons}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={estilos.cupom}>
+          <View style={styles.cupom}>
             <Text>{item.titulo}</Text>
             <Text>{item.descricao}</Text>
             <Text>Validade: {item.validade}</Text>
-            <Button title="Adicionar" onPress={() => adicionarAoCarrinho(item)} />
+            <Button title="Adicionar ao Carrinho" onPress={() => adicionarAoCarrinho(item)} />
           </View>
         )}
       />
 
-      <Text style={estilos.titulo}>Carrinho</Text>
-
-<Button
-  title="Ver Carrinho"
-  onPress={() => navigation.navigate('Carrinho', { user })}
-/>
-
-      <FlatList
-        data={carrinho}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={estilos.cupom}>
-            <Text>{item.titulo}</Text>
-            <Button title="Remover" onPress={() => removerDoCarrinho(item.id)} />
-          </View>
-        )}
-      />
-
+      <Button title="Ver Carrinho" onPress={() => navigation.navigate('Carrinho', { carrinho, user })} />
       <Button title="Sair" onPress={onLogout} color="red" />
     </View>
   );
 }
 
-const estilos = StyleSheet.create({
+const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, paddingTop: 50 },
   titulo: { fontSize: 20, fontWeight: 'bold', marginBottom: 10 },
   cupom: {

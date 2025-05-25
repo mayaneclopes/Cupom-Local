@@ -16,13 +16,18 @@ export default function LoginFakeScreen({ onLogin, navigation }) {
     }
 
     try {
-      const resposta = await axios.post(`${API_URL}/auth/login`, {
-        email,
-        senha,
-      });
+     const resposta = await axios.post(`${API_URL}/auth/login`, 
+      {
+  email,
+  senha,
+});
 
-      const { token, usuario_id } = resposta.data;
-onLogin({ email, token, usuario_id }); // envia o token pra próxima tela
+console.log('Resposta do login:', resposta.data);
+
+const { token, usuario_id } = resposta.data;
+
+onLogin({ email, id: usuario_id, token }); 
+
     } catch (error) {
       console.error(error);
       Alert.alert('Erro', error.response?.data?.erro || 'Erro ao fazer login');
