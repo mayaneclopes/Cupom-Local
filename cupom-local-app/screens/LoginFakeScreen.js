@@ -21,8 +21,8 @@ export default function LoginFakeScreen({ onLogin, navigation }) {
         senha,
       });
 
-      const { token } = resposta.data;
-      onLogin({ email, token }); // envia o token pra próxima tela
+      const { token, usuario_id } = resposta.data;
+onLogin({ email, token, usuario_id }); // envia o token pra próxima tela
     } catch (error) {
       console.error(error);
       Alert.alert('Erro', error.response?.data?.erro || 'Erro ao fazer login');

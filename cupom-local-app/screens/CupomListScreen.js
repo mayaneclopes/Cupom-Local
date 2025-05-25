@@ -3,9 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, Button, StyleSheet } from 'react-native';
 import axios from 'axios';
 
-const API_URL = 'http://192.168.0.123:3001'; // seu IP real aqui
+const API_URL = 'http://192.168.0.15:3001'; 
 
-export default function CupomListScreen({ onLogout }) {
+export default function CupomListScreen({ user, onLogout, navigation }) {
   const [cupons, setCupons] = useState([]);
   const [carrinho, setCarrinho] = useState([]);
 
@@ -43,6 +43,11 @@ export default function CupomListScreen({ onLogout }) {
       />
 
       <Text style={estilos.titulo}>Carrinho</Text>
+
+<Button
+  title="Ver Carrinho"
+  onPress={() => navigation.navigate('Carrinho', { user })}
+/>
 
       <FlatList
         data={carrinho}

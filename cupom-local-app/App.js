@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginFakeScreen from './screens/LoginFakeScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import CupomListScreen from './screens/CupomListScreen';
+import CarrinhoScreen from './screens/CarrinhoScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -15,14 +16,25 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
         {user ? (
-          <Stack.Screen name="Cupons">
-            {() => <CupomListScreen onLogout={() => setUser(null)} />}
-          </Stack.Screen>
+          <>
+            <Stack.Screen name="Cupons">
+              {(props) => (
+                <CupomListScreen
+                  {...props}
+                  user={user}
+                  onLogout={() => setUser(null)}
+                />
+              )}
+            </Stack.Screen>
+
+            {/* ✅ Rota declarada com componente direto */}
+            <Stack.Screen name="Carrinho" component={CarrinhoScreen} />
+          </>
         ) : (
           <>
-<Stack.Screen name="Login" options={{ headerShown: false }}>
-  {(props) => <LoginFakeScreen {...props} onLogin={setUser} />}
-</Stack.Screen>
+            <Stack.Screen name="Login" options={{ headerShown: false }}>
+              {(props) => <LoginFakeScreen {...props} onLogin={setUser} />}
+            </Stack.Screen>
             <Stack.Screen name="Cadastro" component={RegisterScreen} />
           </>
         )}

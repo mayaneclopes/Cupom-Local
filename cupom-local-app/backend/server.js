@@ -51,7 +51,7 @@ app.post('/auth/login', (req, res) => {
       expiresIn: '2h'
     });
 
-    res.json({ mensagem: 'Login bem-sucedido', token });
+    res.json({ mensagem: 'Login bem-sucedido', token, usuario_id: usuario.id });
   });
 });
 
@@ -71,4 +71,42 @@ app.get('/cupons', (req, res) => {
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
+});
+
+// Adicionar cupom ao carrinho
+app.post('/carrinho', (req, res) => {
+  const { usuario_id, cupom_id } = req.body;
+
+  if (!usuario_id || !cupom_id) {
+    return res.status(400).json({ erro: 'Usuário e cupom obrigatórios' });
+  }
+
+  const sql = 'INSERT INTO carrinho (usuario_id, cupom_id) VALUES (?, ?)';
+  db.query(sql, [usuario_id, cupom_id], (err, result) => {
+    if (err) {
+      console.error('Erro ao adicionar ao carrinho:', err);
+      return res.status(500).json({ erro: 'Erro ao adicionar ao carrinho' });
+    }
+    res.status(201).json({ mensagem: 'Adicionado ao carrinho com sucesso' });
+  });
+});
+
+// Listar cupons do carrinho por usuário
+app.get('/carrinho/:usuario_id', (req, res) => {
+  const usuario_id = req.params.usuario_id;
+
+  const sql = `
+    SELECT c.id, c.titulo, c.descricao, c.validade, c.valor
+    FROM carrinho AS car
+    JOIN cupons AS c ON car.cupom_id = c.id
+    WHERE car.usuario_id = ?
+  `;
+
+  db.query(sql, [usuario_id], (err, resultados) => {
+    if (err) {
+      console.error('Erro ao buscar carrinho:', err);
+      return res.status(500).json({ erro: 'Erro ao buscar carrinho' });
+    }
+    res.json(resultados);
+  });
 });
