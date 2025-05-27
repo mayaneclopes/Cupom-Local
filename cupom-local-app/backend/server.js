@@ -15,7 +15,7 @@ app.use(express.json());
 app.post('/auth/register', (req, res) => {
   const { email, senha } = req.body;
 
-  console.log('Tentativa de cadastro:', email); // 👈 ADICIONE ISSO
+  console.log('Tentativa de cadastro:', email);
 
   if (!email || !senha) return res.status(400).json({ erro: 'Email e senha obrigatórios' });
 
@@ -25,10 +25,10 @@ app.post('/auth/register', (req, res) => {
       if (err.code === 'ER_DUP_ENTRY') {
         return res.status(400).json({ erro: 'Usuário já cadastrado' });
       }
-      console.error('Erro ao inserir usuário:', err); // 👈 ADICIONE ISSO
+      console.error('Erro ao inserir usuário:', err); 
       return res.status(500).json({ erro: 'Erro ao registrar' });
     }
-    console.log('Usuário cadastrado:', email); // 👈 ADICIONE ISSO
+    console.log('Usuário cadastrado:', email); 
     res.status(201).json({ mensagem: 'Usuário cadastrado com sucesso' });
   });
 });
