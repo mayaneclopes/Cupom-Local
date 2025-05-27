@@ -1,15 +1,20 @@
+// screens/LoginScreen.js
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  Alert,
+} from 'react-native';
 import axios from 'axios';
-import { styled } from 'nativewind';
+import logoTexto from '../assets/logo-texto.png'; 
 
 const API_URL = 'http://192.168.0.15:3001';
 
-const StyledTextInput = styled(TextInput);
-const StyledTouchableOpacity = styled(TouchableOpacity);
-const StyledText = styled(Text);
-
-export default function LoginFakeScreen({ onLogin, navigation }) {
+export default function LoginFakeScreen({ navigation, onLogin }) {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
 
@@ -20,8 +25,12 @@ export default function LoginFakeScreen({ onLogin, navigation }) {
     }
 
     try {
-      const resposta = await axios.post(`${API_URL}/auth/login`, { email, senha });
-      const { token, usuario_id } = resposta.data;
+      const { data } = await axios.post(`${API_URL}/auth/login`, {
+        email,
+        senha,
+      });
+
+      const { token, usuario_id } = data;
       onLogin({ email, id: usuario_id, token });
     } catch (error) {
       console.error(error);
@@ -30,36 +39,113 @@ export default function LoginFakeScreen({ onLogin, navigation }) {
   };
 
   return (
-    <View className="flex-1 justify-center items-center bg-white px-8">
-      <Text className="text-3xl font-bold text-purple-800 mb-10">Cupom Local</Text>
+    <View style={styles.container}>
+      {/* Logo ok */}
+      <View style={styles.logoContainer}>
+        <Image source={logoTexto} style={styles.logoImage} 
+        resizeMode= "contain"/>
 
-      <StyledTextInput
-        className="w-full border border-gray-300 rounded-xl px-4 py-3 mb-4 text-base"
-        placeholder="E-mail"
-        autoCapitalize="none"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
-      />
+      </View>
 
-      <StyledTextInput
-        className="w-full border border-gray-300 rounded-xl px-4 py-3 mb-6 text-base"
-        placeholder="Senha"
-        secureTextEntry
-        value={senha}
-        onChangeText={setSenha}
-      />
+      {/* Formulário ok*/}
+      <Text style={styles.label}>E-mail</Text>
+      <TextInput style={styles.input} 
+      placeholder="seu@email.com" 
+      value={email}
+      onChangeText={setEmail}
+      autoCapitalize="none"
+      keyboardType="email-address"/>
 
-      <StyledTouchableOpacity
-        className="bg-purple-700 rounded-xl w-full py-3 items-center mb-3"
-        onPress={handleLogin}
-      >
-        <StyledText className="text-white font-semibold uppercase">Entrar</StyledText>
-      </StyledTouchableOpacity>
+      <Text style={[styles.label, 
+        { marginTop: 10 }]}>Senha</Text>
+      <TextInput style={styles.input}
+       placeholder="••••••••" 
+       value={senha}
+       onChangeText={setSenha}
+       secureTextEntry />
 
+      {/* Botão Entrar */}
+<TouchableOpacity style={styles.button} onPress={handleLogin}>
+  <Text style={styles.buttonText }>Entrar</Text>
+</TouchableOpacity>
+
+      {/* Links */}
+      <TouchableOpacity onPress={() => {/* esqueci senha - a fazer */}}>
+        <Text style={styles.link}>Esqueci minha senha</Text>
+      </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate('Cadastro')}>
-        <Text className="text-sm text-gray-500">Criar conta</Text>
+        <Text style={[styles.link, { marginTop: 10 }]}>Cadastrar</Text>
       </TouchableOpacity>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 80,
+  },
+
+  logoContainer: {
+    alignItems: 'center',
+    marginBottom: 50,
+    marginTop: 80,
+  },
+  logoImage: {
+    width: 202.6,
+    height: 90.45,
+    marginBottom: 10,
+  },
+  logoText: {
+    color: '#0D1B2A',
+    fontSize: 54,
+    fontWeight: '800',
+    lineHeight: 58,
+    textAlign: 'center',
+    fontFamily: 'Poppins-ExtraBold',
+  },
+
+  label: {
+    alignSelf: 'flex-start',
+    marginLeft: 10,
+    color: '#000000',
+    fontSize: 20,
+    fontWeight: '300',
+    fontFamily: 'Poppins-Light',
+  },
+  input: {
+    width: '100%',
+    height: 50,
+    borderWidth: 1,
+    borderColor: '#D9D9D9',
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    marginTop: 5,
+  },
+
+  button: {
+    width: '100%',
+    backgroundColor: '#0D1B2A',
+    borderRadius: 10,
+    paddingVertical: 12,
+    alignItems: 'center',
+    marginTop: 30,
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: '300',
+    fontFamily: 'Poppins-Light',
+  },
+
+  link: {
+    color: '#000000',
+    fontSize: 15,
+    fontWeight: '300',
+    fontFamily: 'Poppins-Light',
+    marginTop: 20,
+  },
+});
