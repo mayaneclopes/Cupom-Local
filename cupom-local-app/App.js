@@ -34,7 +34,8 @@ export default function App() {
       <Stack.Navigator>
         {user ? (
           <>
-            <Stack.Screen name="Cupons">
+            <Stack.Screen name="Cupons"
+            options={{headerShown: false}}>
               {props => (
                 <CupomListScreen
                   {...props}

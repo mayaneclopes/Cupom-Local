@@ -64,12 +64,12 @@ export default function LoginFakeScreen({ navigation, onLogin }) {
        onChangeText={setSenha}
        secureTextEntry />
 
-      {/* Botão Entrar */}
+      {/* Botão Entrar ok estil e nav*/}
 <TouchableOpacity style={styles.button} onPress={handleLogin}>
   <Text style={styles.buttonText }>Entrar</Text>
 </TouchableOpacity>
 
-      {/* Links */}
+      {/* Links - A FAZER TODOS */}
       <TouchableOpacity onPress={() => {/* esqueci senha - a fazer */}}>
         <Text style={styles.link}>Esqueci minha senha</Text>
       </TouchableOpacity>
