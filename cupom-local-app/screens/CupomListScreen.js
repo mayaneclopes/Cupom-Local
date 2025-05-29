@@ -3,8 +3,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Rodape from '../components/Rodape';
 import Header from '../components/Header';
 import Categorias from '../components/Categorias';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import {
   View,
+  FlatList,
   Text,
   StyleSheet,
   Image,
@@ -13,35 +17,59 @@ import {
 } from 'react-native';
 
 export default function CupomListScreen({ navigation }) {
+
+const [cupons, setCupons] = useState([]);
+
+useEffect(() => {
+  axios.get('http://192.168.0.15:3001/cupons') 
+    .then(response => {
+      setCupons(response.data);
+    })
+    .catch(error => {
+      console.error('Erro ao buscar cupons:', error);
+    });
+}, []);
+
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.container}>
-    <View style={styles.container}>
+<SafeAreaView style={styles.container}>
+
     <Header/>
         <Categorias/>
       <ScrollView showsVerticalScrollIndicator={false}>
    {/* Promo Card Banner */}
-<View style={styles.promoCard}>
-   <TouchableOpacity onPress={() => console.log('Ir para detalhes Banner Principal')}>
-  <Image
-    source={require('../assets/dinner.png')}
-    style={styles.promoImage}
-  />
-  </TouchableOpacity>
-  <View style={styles.cardInfo}>
-     <TouchableOpacity onPress={() => console.log('Ir para detalhes  Banner Principal')}>
-    <Text style={styles.cardTitle}>Jantar Romântico para Dois</Text>
-    <Text style={styles.cardPrice}>a partir de R$200,00</Text>
-    </TouchableOpacity>
-    <TouchableOpacity style={styles.bagButton} onPress={() => console.log('Adicionar ao carrinho')}>
-      <Image
-        source={require('../assets/bag-green.png')}
-        style={styles.bagIcon}
-      />
-    </TouchableOpacity>
-  </View>
-</View>
-
+<FlatList
+  data={cupons}
+  keyExtractor={(item) => item.id.toString()}
+  numColumns={2}
+  contentContainerStyle={{ paddingHorizontal: 10 }}
+  columnWrapperStyle={{ justifyContent: 'space-between', marginBottom: 15 }}
+  renderItem={({ item: cupom }) => (
+    <View style={styles.card}>
+      <Image source={require('../assets/image.png')} style={styles.cardImage} />
+      <Text style={styles.cardTitle}>{cupom.titulo}</Text>
+      {cupom.valor != null && !isNaN(cupom.valor) && (
+        <Text style={styles.cupomValor}>Valor: R$ {Number(cupom.valor).toFixed(2)}</Text>
+      )}
+      <TouchableOpacity
+        style={styles.bagButton}
+        onPress={() => {
+          axios.post('http://192.168.0.15:3001/carrinho', {
+            usuario_id: 4,
+            cupom_id: cupom.id,
+          })
+          .then(() => {
+            console.log('Cupom adicionado ao carrinho!');
+          })
+          .catch(error => {
+            console.error('Erro ao adicionar ao carrinho:', error);
+          });
+        }}
+      >
+        <Image source={require('../assets/bag.png')} style={styles.bagIcon} />
+      </TouchableOpacity>
+    </View>
+  )}
+/>
 {/* Sub-banners clicáveis - add rotass*/}
 <View style={styles.subBannerRow}>
   <TouchableOpacity onPress={() => console.log('Ir para Novidades')}>
@@ -52,23 +80,8 @@ export default function CupomListScreen({ navigation }) {
   </TouchableOpacity>
 </View>
 
-        {/* Cards de cupons - add rotas*/}
-        <View style={styles.cardRow}>
-          <View style={styles.card}>
-             <TouchableOpacity onPress={() => console.log('Ir p/ detalhes 1')}>
-            <Image source={require('../assets/image.png')} style={styles.cardImage} />
-            </TouchableOpacity>
-            <Text style={[styles.cardTitle, {fontSize: 15}]}>Corte feminino</Text>
-            <Text style={styles.cardPrice}>a partir de R$80,00</Text>
- <TouchableOpacity style={[styles.bagButton, {top: 150}]} onPress={() => console.log('Adicionar ao carrinho')}>
-      <Image
-        source={require('../assets/bag-green.png')}
-        style={styles.bagIcon}
-      />
-    </TouchableOpacity>
-          </View>
 
-          <View style={styles.card}>
+     {/* <View style={styles.card}>
             <TouchableOpacity onPress={() => console.log('Ir p/ detalhes 2')}>
             <Image source={require('../assets/image-3.png')} style={styles.cardImage} />
             </TouchableOpacity>
@@ -76,13 +89,13 @@ export default function CupomListScreen({ navigation }) {
       <Image
         source={require('../assets/bag-green.png')}
         style={styles.bagIcon}
-      />
-    </TouchableOpacity>
+      /> */}
+    {/* </TouchableOpacity>
             <Text style={styles.cardTitle}>Banho e tosa</Text>
             <Text style={styles.cardPrice}>por R$60,00</Text>
             <Text style={styles.cardOldPrice}>de R$90,00</Text>
           </View>
-        </View>
+        */}
 
         {/* Banner inferior */}
       <TouchableOpacity style={styles.bottomBanner} onPress={() => console.log('Ir para categoria especial')}>
@@ -91,8 +104,6 @@ export default function CupomListScreen({ navigation }) {
       </ScrollView>
 
      <Rodape />
-    </View>
-    </View>
     </SafeAreaView>
   );
 }
@@ -126,14 +137,29 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     padding: 10,
   },
-  card: {
-    width: 150,
-    borderWidth: 1,
-    borderColor: '#eaeaea',
-    borderRadius: 10,
-    padding: 10,
-    marginTop: 1,
-  },
+card: {
+  flex: 1,
+  marginHorizontal: 5,
+  borderWidth: 1,
+  borderColor: '#eaeaea',
+  borderRadius: 10,
+  padding: 10,
+  marginTop: 1,
+  maxWidth: '48%', 
+},
+  bagButton: {
+  position: 'absolute',
+  bottom: 10,
+  right: 10,
+  backgroundColor: '#FFF',
+  padding: 6,
+  borderRadius: 20,
+  elevation: 2,
+},
+bagIcon: {
+  width: 20,
+  height: 20,
+},
   cardImage: {
     width: '100%',
     height: 100,

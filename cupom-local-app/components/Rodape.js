@@ -21,7 +21,7 @@ export default function Rodape({ navigation }) {
 
       <TouchableOpacity style={styles.item}>
         <Image source={require('../assets/bag.png')} style={styles.icon} />
-        <Text style={styles.label}>Pedidos</Text>
+        <Text style={styles.label}>Carrinho</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.item}>
