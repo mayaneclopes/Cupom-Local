@@ -45,7 +45,9 @@ export default function App() {
               )}
             </Stack.Screen>
 
-            <Stack.Screen name="Carrinho" component={CarrinhoScreen} />
+              <Stack.Screen name="Carrinho">
+          {props => <CarrinhoScreen {...props} user={user} />}
+        </Stack.Screen>
           </>
         ) : (
           <>

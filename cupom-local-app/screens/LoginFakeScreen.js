@@ -1,4 +1,3 @@
-// screens/LoginScreen.js
 import React, { useState } from 'react';
 import {
   View,
@@ -11,32 +10,34 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import logoTexto from '../assets/logo-texto.png'; 
-
-const API_URL = 'http://192.168.0.15:3001';
+import { API_URL } from '../config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LoginFakeScreen({ navigation, onLogin }) {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
 
-  const handleLogin = async () => {
-    if (!email || !senha) {
-      Alert.alert('Erro', 'Preencha e-mail e senha');
-      return;
+const handleLogin = async () => {
+  try {
+    const { data } = await axios.post(`${API_URL}/auth/login`, { email, senha });
+    
+    if (!data.token || !data.usuario_id) {
+      throw new Error("Resposta da API incompleta");
     }
 
-    try {
-      const { data } = await axios.post(`${API_URL}/auth/login`, {
-        email,
-        senha,
-      });
+    const usuario = {
+      id: data.usuario_id,
+      email: email 
+    };
 
-      const { token, usuario_id } = data;
-      onLogin({ email, id: usuario_id, token });
-    } catch (error) {
-      console.error(error);
-      Alert.alert('Erro', error.response?.data?.erro || 'Erro ao fazer login');
-    }
-  };
+    await AsyncStorage.setItem('user', JSON.stringify(usuario));
+    onLogin(usuario);
+    
+  } catch (error) {
+    console.error("Erro:", error);
+    Alert.alert('Erro', error.message);
+  }
+};
 
   return (
     <View style={styles.container}>

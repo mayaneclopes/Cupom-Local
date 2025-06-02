@@ -1,9 +1,6 @@
-// screens/RegisterScreen.js
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
 import axios from 'axios';
-
-const API_URL = 'http://192.168.0.15:3001';
 
 export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState('');

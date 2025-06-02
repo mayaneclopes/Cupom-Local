@@ -6,6 +6,7 @@ import Categorias from '../components/Categorias';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import { API_URL } from '../config';
 import {
   View,
   FlatList,
@@ -35,7 +36,6 @@ useEffect(() => {
 
     <Header/>
         <Categorias/>
-      <ScrollView showsVerticalScrollIndicator={false}>
    {/* Promo Card Banner */}
 <FlatList
   data={cupons}
@@ -101,7 +101,6 @@ useEffect(() => {
       <TouchableOpacity style={styles.bottomBanner} onPress={() => console.log('Ir para categoria especial')}>
         <Image source={require('../assets/maes.png')} style={styles.cardImage} />
 </TouchableOpacity>
-      </ScrollView>
 
      <Rodape />
     </SafeAreaView>

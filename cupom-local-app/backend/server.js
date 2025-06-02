@@ -1,4 +1,3 @@
-// server.js
 const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
@@ -47,18 +46,17 @@ app.post('/auth/login', (req, res) => {
       return res.status(401).json({ erro: 'Credenciais inválidas' });
     }
 
-    const token = jwt.sign({ id: usuario.id, email: usuario.email }, process.env.JWT_SECRET, {
-      expiresIn: '2h'
+  const token = jwt.sign({ id: usuario.id, email: usuario.email }, process.env.JWT_SECRET, {
+    expiresIn: '2h'
     });
-
-    res.json({
-  mensagem: 'Login bem-sucedido',
+res.json({
   token,
-  usuario_id: usuario.id, 
+  usuario: {  // ✅ Novo formato
+    id: usuario.id,
+    email: usuario.email
+  }
 });
-
-  });
-});
+})});
 
 // Rota para listar cupons
 app.get('/cupons', (req, res) => {
@@ -98,15 +96,18 @@ app.post('/carrinho', (req, res) => {
 // Listar cupons do carrinho por usuário
 app.get('/carrinho/:usuario_id', (req, res) => {
   const { usuario_id } = req.params;
+  const { pagina = 1, limite = 10 } = req.query; // Valores padrão
+  const offset = (pagina - 1) * limite;
 
   const sql = `
-    SELECT carrinho.id, cupons.titulo, cupons.descricao, cupons.validade
+    SELECT carrinho.id, cupons.titulo, cupons.valor
     FROM carrinho
     JOIN cupons ON cupons.id = carrinho.cupom_id
     WHERE carrinho.usuario_id = ?
+    LIMIT ? OFFSET ?
   `;
 
-  db.query(sql, [usuario_id], (err, resultados) => {
+  db.query(sql, [usuario_id, limite, offset], (err, resultados) => {
     if (err) return res.status(500).json({ erro: 'Erro ao buscar carrinho' });
     res.json(resultados);
   });

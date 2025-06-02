@@ -1,6 +1,6 @@
-// screens/HomeScreen.js
 import React from 'react';
 import { View, Text, Button } from 'react-native';
+import { API_URL } from '../config';
 
 export default function HomeScreen({ user, onLogout }) {
   return (
