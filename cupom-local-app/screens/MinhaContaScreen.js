@@ -26,12 +26,6 @@ export default function MinhaContaScreen({ navigation, user, setUser }) {
 const handleLogout = async () => {
   await AsyncStorage.removeItem('user');
   setUser(null);
-
-  // // Força a navegação para a tela de login após logout
-  // navigation.reset({
-  //   index: 0,
-  //   routes: [{ name: 'Login' }],
-  // });
 };
 
 if (!user) return null;

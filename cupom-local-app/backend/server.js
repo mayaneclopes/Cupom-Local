@@ -12,22 +12,35 @@ app.use(express.json());
 
 // Rota de cadastro
 app.post('/auth/register', (req, res) => {
-  const { email, senha } = req.body;
+  const {
+    email, senha, nome, cpf_cnpj,
+    logradouro, numero, bairro, cidade,
+    estado, cep, pais
+  } = req.body;
 
-  console.log('Tentativa de cadastro:', email);
-
-  if (!email || !senha) return res.status(400).json({ erro: 'Email e senha obrigatórios' });
+  if (!email || !senha || !nome || !cpf_cnpj) {
+    return res.status(400).json({ erro: 'Campos obrigatórios não preenchidos' });
+  }
 
   const hash = bcrypt.hashSync(senha, 10);
-  db.query('INSERT INTO usuarios (email, senha_hash) VALUES (?, ?)', [email, hash], (err) => {
+
+  const sql = `
+    INSERT INTO usuarios 
+    (email, senha_hash, nome, cpf_cnpj, logradouro, numero, bairro, cidade, estado, cep, pais)
+    VALUES [email, hash, nome, cpf_cnpj, logradouro, numero, bairro, cidade, estado, cep, pais];
+  `;
+
+  const values = [email, hash, nome, cpf_cnpj, logradouro, numero, bairro, cidade, estado, cep, pais];
+  console.log('Valores sendo inseridos:', values);
+  db.query(sql, values, (err) => {
     if (err) {
       if (err.code === 'ER_DUP_ENTRY') {
         return res.status(400).json({ erro: 'Usuário já cadastrado' });
       }
-      console.error('Erro ao inserir usuário:', err); 
+      console.error('Erro ao registrar:', err);
       return res.status(500).json({ erro: 'Erro ao registrar' });
     }
-    console.log('Usuário cadastrado:', email); 
+
     res.status(201).json({ mensagem: 'Usuário cadastrado com sucesso' });
   });
 });
@@ -51,7 +64,7 @@ app.post('/auth/login', (req, res) => {
     });
 res.json({
   token,
-  usuario: {  // ✅ Novo formato
+  usuario: {  
     id: usuario.id,
     email: usuario.email
   }
