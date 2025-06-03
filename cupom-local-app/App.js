@@ -3,10 +3,12 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as Font from 'expo-font';
 import { Text, View } from 'react-native';
+
 import LoginFakeScreen from './screens/LoginFakeScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import CupomListScreen from './screens/CupomListScreen';
 import CarrinhoScreen from './screens/CarrinhoScreen';
+import MinhaContaScreen from './screens/MinhaContaScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -21,21 +23,27 @@ export default function App() {
     }).then(() => setFontsLoaded(true));
   }, []);
 
- /* if (!fontsLoaded) {
+  /* if (!fontsLoaded) {
     return (
       <View style={{ flex:1, justifyContent:'center', alignItems:'center' }}>
         <Text>Carregando fontes…</Text>
       </View>
     );
-  }*/
+  } */
 
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        {user ? (
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {!user ? (
           <>
-            <Stack.Screen name="Cupons"
-            options={{headerShown: false}}>
+            <Stack.Screen name="Login">
+              {props => <LoginFakeScreen {...props} onLogin={setUser} />}
+            </Stack.Screen>
+            <Stack.Screen name="Cadastro" component={RegisterScreen} />
+          </>
+        ) : (
+          <>
+            <Stack.Screen name="Cupons">
               {props => (
                 <CupomListScreen
                   {...props}
@@ -45,16 +53,19 @@ export default function App() {
               )}
             </Stack.Screen>
 
-              <Stack.Screen name="Carrinho">
-          {props => <CarrinhoScreen {...props} user={user} />}
-        </Stack.Screen>
-          </>
-        ) : (
-          <>
-            <Stack.Screen name="Login" options={{ headerShown:false }}>
-              {props => <LoginFakeScreen {...props} onLogin={setUser} />}
+            <Stack.Screen name="Carrinho">
+              {props => <CarrinhoScreen {...props} user={user} />}
             </Stack.Screen>
-            <Stack.Screen name="Cadastro" component={RegisterScreen} />
+
+            <Stack.Screen name="MinhaConta">
+              {props => (
+                <MinhaContaScreen
+                  {...props}
+                  user={user}
+                  setUser={setUser}
+                />
+              )}
+            </Stack.Screen>
           </>
         )}
       </Stack.Navigator>

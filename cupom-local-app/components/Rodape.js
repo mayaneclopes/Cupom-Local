@@ -52,12 +52,13 @@ onPress={() => {
         <Text style={styles.label}>Carrinho</Text>
       </TouchableOpacity>
 
-        <TouchableOpacity
-        style={styles.item}
-        >
-        <Image source={require('../assets/profile-circle.png')} style={styles.icon} />
-        <Text style={styles.label}>Conta</Text>
-      </TouchableOpacity>
+<TouchableOpacity
+  style={styles.item}
+  onPress={() => navigation.navigate('MinhaConta')}
+>
+  <Image source={require('../assets/profile-circle.png')} style={styles.icon} />
+  <Text style={styles.label}>Conta</Text>
+</TouchableOpacity>
     </View>
   );
 }

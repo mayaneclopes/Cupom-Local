@@ -21,23 +21,25 @@ const handleLogin = async () => {
   try {
     const { data } = await axios.post(`${API_URL}/auth/login`, { email, senha });
     
-    if (!data.token || !data.usuario_id) {
+    // Verifique a nova estrutura da resposta
+    console.log("Resposta completa:", data);
+    
+    if (!data.token || !data.usuario) {
       throw new Error("Resposta da API incompleta");
     }
 
-    const usuario = {
-      id: data.usuario_id,
-      email: email 
-    };
-
-    await AsyncStorage.setItem('user', JSON.stringify(usuario));
-    onLogin(usuario);
+    await AsyncStorage.setItem('user', JSON.stringify(data.usuario));
+    onLogin(data.usuario); // Garanta que está passando o objeto completo
     
   } catch (error) {
-    console.error("Erro:", error);
-    Alert.alert('Erro', error.message);
+    console.error("Erro detalhado:", {
+      message: error.message,
+      response: error.response?.data
+    });
+    Alert.alert('Erro', error.response?.data?.erro || 'Credenciais inválidas');
   }
 };
+
 
   return (
     <View style={styles.container}>
