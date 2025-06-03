@@ -24,11 +24,11 @@ app.post('/auth/register', (req, res) => {
 
   const hash = bcrypt.hashSync(senha, 10);
 
-  const sql = `
-    INSERT INTO usuarios 
-    (email, senha_hash, nome, cpf_cnpj, logradouro, numero, bairro, cidade, estado, cep, pais)
-    VALUES [email, hash, nome, cpf_cnpj, logradouro, numero, bairro, cidade, estado, cep, pais];
-  `;
+const sql = `
+  INSERT INTO usuarios 
+  (email, senha_hash, nome, cpf_cnpj, logradouro, numero, bairro, cidade, estado, cep, pais)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+`;
 
   const values = [email, hash, nome, cpf_cnpj, logradouro, numero, bairro, cidade, estado, cep, pais];
   console.log('Valores sendo inseridos:', values);
@@ -66,7 +66,16 @@ res.json({
   token,
   usuario: {  
     id: usuario.id,
-    email: usuario.email
+    email: usuario.email,
+    nome: usuario.nome,
+    cpf: usuario.cpf,
+    logradouro: usuario.logradouro,
+    numero: usuario.numero,
+    bairro: usuario.bairro,
+    cidade: usuario.cidade,
+    estado: usuario.estado,
+    cep: usuario.cep,
+    pais: usuario.pais,
   }
 });
 })});

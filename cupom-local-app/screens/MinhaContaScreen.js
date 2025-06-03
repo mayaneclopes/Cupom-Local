@@ -11,14 +11,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoginFakeScreen from './LoginFakeScreen';
 import { CommonActions } from '@react-navigation/native';
 
-
 export default function MinhaContaScreen({ navigation, user, setUser }) {
-
+  console.log('Dados do usuário:', user);
  // const user = route.params?.user || {};
   
   // Mocked data (trocar por dados reais)
   const userData = {
-    nome: 'Fulano',
     cashback: 42.50,
     economizado: 127.80,
   };
