@@ -10,6 +10,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+
 // Rota de cadastro
 app.post('/auth/register', (req, res) => {
   const {
@@ -145,3 +146,55 @@ app.delete('/carrinho/:id', (req, res) => {
   });
 });
 
+// GET usuários por ID
+app.get('/usuarios/:id', (req, res) => {
+  const { id } = req.params;
+  const sql = 'SELECT * FROM usuarios WHERE id = ?';
+
+  db.query(sql, [id], (err, result) => {
+    if (err) {
+      console.error('Erro ao buscar usuário:', err);
+      return res.status(500).json({ erro: 'Erro interno' });
+    }
+    if (result.length === 0) {
+      return res.status(404).json({ erro: 'Usuário não encontrado' });
+    }
+    res.json(result[0]);
+  });
+});
+
+// Rota para deletar usuário
+app.delete('/usuarios/:id', (req, res) => {
+  const { id } = req.params;
+
+  db.query('DELETE FROM usuarios WHERE id = ?', [id], (err) => {
+    if (err) {
+      console.error('Erro ao deletar usuário:', err);
+      return res.status(500).json({ erro: 'Erro ao excluir conta' });
+    }
+    res.json({ mensagem: 'Conta excluída com sucesso' });
+  });
+});
+
+// Rota para alterar senha
+app.put('/usuarios/alterar-senha/:id', (req, res) => {
+  const { id } = req.params;
+  const { senha_atual, nova_senha } = req.body;
+
+  // --- Verificar senha atual
+  db.query('SELECT senha_hash FROM usuarios WHERE id = ?', [id], (err, resultados) => {
+    if (err) return res.status(500).json({ erro: 'Erro ao verificar senha' });
+    
+    const usuario = resultados[0];
+    if (!bcrypt.compareSync(senha_atual, usuario.senha_hash)) {
+      return res.status(401).json({ erro: 'Senha atual incorreta' });
+    }
+
+    // --- Atualizar para nova senha
+    const novaHash = bcrypt.hashSync(nova_senha, 10);
+    db.query('UPDATE usuarios SET senha_hash = ? WHERE id = ?', [novaHash, id], (err) => {
+      if (err) return res.status(500).json({ erro: 'Erro ao atualizar senha' });
+      res.json({ mensagem: 'Senha alterada com sucesso' });
+    });
+  });
+});

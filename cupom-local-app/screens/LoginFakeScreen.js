@@ -21,7 +21,6 @@ const handleLogin = async () => {
   try {
     const { data } = await axios.post(`${API_URL}/auth/login`, { email, senha });
     
-    // Verifique a nova estrutura da resposta
     console.log("Resposta completa:", data);
     
     if (!data.token || !data.usuario) {
@@ -29,7 +28,7 @@ const handleLogin = async () => {
     }
 
     await AsyncStorage.setItem('user', JSON.stringify(data.usuario));
-    onLogin(data.usuario); // Garanta que está passando o objeto completo
+    onLogin(data.usuario); 
     
   } catch (error) {
     console.error("Erro detalhado:", {
@@ -77,6 +76,8 @@ const handleLogin = async () => {
         <Text style={styles.link}>Esqueci minha senha</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate('Cadastro')}>
+        
+        
         <Text style={[styles.link, { marginTop: 10 }]}>Cadastrar</Text>
       </TouchableOpacity>
     </View>

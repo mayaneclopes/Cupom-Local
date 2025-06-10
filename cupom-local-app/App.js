@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as Font from 'expo-font';
 import { Text, View } from 'react-native';
-
+import MeusDadosScreen from './screens/MeusDadosScreen';
 import LoginFakeScreen from './screens/LoginFakeScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import CupomListScreen from './screens/CupomListScreen';
@@ -52,7 +52,14 @@ export default function App() {
                 />
               )}
             </Stack.Screen>
-
+              <Stack.Screen name="MeusDados">
+                {(props) => (
+                  <MeusDadosScreen 
+                    {...props} 
+                    onLogout={() => setUser(null)} 
+                  />
+                )}
+              </Stack.Screen>
             <Stack.Screen name="Carrinho">
               {props => <CarrinhoScreen {...props} user={user} />}
             </Stack.Screen>
@@ -66,7 +73,7 @@ export default function App() {
                 />
               )}
             </Stack.Screen>
-          </>
+                      </>
         )}
       </Stack.Navigator>
     </NavigationContainer>

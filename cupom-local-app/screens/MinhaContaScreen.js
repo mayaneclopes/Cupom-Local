@@ -83,12 +83,12 @@ if (!user) return null;
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Configurações</Text>
         
-        <TouchableOpacity 
-          style={styles.button}
-          onPress={() => handleButtonPress('MeusDados')}
-        >
-          <Text style={styles.buttonText}>👤 Meus Dados</Text>
-        </TouchableOpacity>
+<TouchableOpacity 
+  style={styles.button}
+  onPress={() => navigation.navigate('MeusDados')}
+>
+  <Text style={styles.buttonText}>👤 Meus Dados</Text>
+</TouchableOpacity>
 
         <TouchableOpacity 
           style={styles.button}
