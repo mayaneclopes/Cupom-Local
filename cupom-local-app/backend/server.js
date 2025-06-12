@@ -83,11 +83,9 @@ res.json({
 
 // Rota para listar cupons
 app.get('/cupons', (req, res) => {
-  db.query('SELECT * FROM cupons ORDER BY validade ASC', (err, resultados) => {
-    if (err) {
-      console.error('Erro ao buscar cupons:', err);
-      return res.status(500).json({ erro: 'Erro ao buscar cupons' });
-    }
+  const sql = 'SELECT id, titulo, descricao, validade, valor, imagem_url FROM cupons ORDER BY validade ASC';
+  db.query(sql, (err, resultados) => {
+    if (err) return res.status(500).json({ erro: 'Erro ao buscar cupons' });
     res.json(resultados);
   });
 });
@@ -144,6 +142,23 @@ app.delete('/carrinho/:id', (req, res) => {
     if (err) return res.status(500).json({ erro: 'Erro ao remover do carrinho' });
     res.json({ mensagem: 'Removido com sucesso' });
   });
+});
+
+// Atualizar imagem de um cupom
+app.put('/cupons/:id/imagem', (req, res) => {
+  const { id } = req.params;
+  const { imagem_url } = req.body;
+  if (!imagem_url) {
+    return res.status(400).json({ erro: 'imagem_url é obrigatório' });
+  }
+  db.query(
+    'UPDATE cupons SET imagem_url = ? WHERE id = ?',
+    [imagem_url, id],
+    (err) => {
+      if (err) return res.status(500).json({ erro: 'Erro ao atualizar imagem' });
+      res.json({ mensagem: 'Imagem atualizada com sucesso' });
+    }
+  );
 });
 
 // GET usuários por ID

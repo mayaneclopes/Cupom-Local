@@ -9,6 +9,7 @@ import RegisterScreen from './screens/RegisterScreen';
 import CupomListScreen from './screens/CupomListScreen';
 import CarrinhoScreen from './screens/CarrinhoScreen';
 import MinhaContaScreen from './screens/MinhaContaScreen';
+import CupomDetalhesScreen from './screens/CupomDetalhesScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -63,7 +64,11 @@ export default function App() {
             <Stack.Screen name="Carrinho">
               {props => <CarrinhoScreen {...props} user={user} />}
             </Stack.Screen>
-
+                <Stack.Screen
+                  name="CupomDetalhes"
+                  component={CupomDetalhesScreen}
+                  options={{ title: 'Detalhes do Cupom' }}
+                />
             <Stack.Screen name="MinhaConta">
               {props => (
                 <MinhaContaScreen
