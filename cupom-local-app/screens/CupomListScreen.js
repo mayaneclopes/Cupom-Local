@@ -8,8 +8,9 @@ import Categorias from '../components/Categorias';
 import Rodape from '../components/Rodape';
 import { API_URL } from '../config';
 
-export default function CupomListScreen({ navigation, user }) {
+export default function CupomListScreen({ user }) {
   const [cupons, setCupons] = useState([]);
+const navigation = useNavigation();
 
   useEffect(() => {
     axios.get(`${API_URL}/cupons`)
@@ -21,36 +22,45 @@ export default function CupomListScreen({ navigation, user }) {
       });
   }, []);
 
-  const renderCupom = ({ item: cupom }) => (
-    <View style={styles.card}>
-    <Image
-  source={{ uri: cupom.imagem_url }}
-  style={styles.cardImage}
-/>
-
+const renderCupom = ({ item: cupom }) => (
+  <View style={styles.card}>
+    {/* Clique no restante do card leva à tela de detalhes */}
+    <TouchableOpacity
+      style={{ flex: 1 }}
+onPress={() => navigation.navigate('CupomDetalhes', { cupom, user })}
+    >
+      <Image
+        source={{ uri: cupom.imagem_url }}
+        style={styles.cardImage}
+      />
       <Text style={styles.cardTitle}>{cupom.titulo}</Text>
       {cupom.valor != null && !isNaN(cupom.valor) && (
-        <Text style={styles.cupomValor}>Valor: R$ {Number(cupom.valor).toFixed(2)}</Text>
+        <Text style={styles.cupomValor}>
+          Valor: R$ {Number(cupom.valor).toFixed(2)}
+        </Text>
       )}
-      <TouchableOpacity
-        style={styles.bagButton}
-        onPress={() => {
-          axios.post(`${API_URL}/carrinho`, {
-            usuario_id: user.id,
-            cupom_id: cupom.id,
-          })
-          .then(() => {
-            console.log('Cupom adicionado ao carrinho!');
-          })
-          .catch(error => {
-            console.error('Erro ao adicionar ao carrinho:', error);
-          });
-        }}
-      >
-        <Image source={require('../assets/bag.png')} style={styles.bagIcon} />
-      </TouchableOpacity>
-    </View>
-  );
+    </TouchableOpacity>
+
+    {/* Botão separado para adicionar ao carrinho */}
+    <TouchableOpacity
+      style={styles.bagButton}
+      onPress={() => {
+        axios.post(`${API_URL}/carrinho`, {
+          usuario_id: user.id,
+          cupom_id: cupom.id,
+        })
+        .then(() => {
+          console.log('Cupom adicionado ao carrinho!');
+        })
+        .catch(error => {
+          console.error('Erro ao adicionar ao carrinho:', error);
+        });
+      }}
+    >
+      <Image source={require('../assets/bag.png')} style={styles.bagIcon} />
+    </TouchableOpacity>
+  </View>
+);
 
   return (
     <SafeAreaView style={styles.container}>

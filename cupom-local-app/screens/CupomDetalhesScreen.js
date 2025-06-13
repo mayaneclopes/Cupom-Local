@@ -1,10 +1,23 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  Alert
+} from 'react-native';
 import { useRoute } from '@react-navigation/native';
+import axios from 'axios';
+import { API_URL } from '../config';
+import Header from '../components/Header';
+import Rodape from '../components/Rodape';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { formatDateBR } from '../utils/formatDate';
 
 export default function CupomDetalhesScreen() {
   const route = useRoute();
-  const { cupom } = route.params || {};
+  const { cupom, user } = route.params || {};
 
   if (!cupom) {
     return (
@@ -14,36 +27,80 @@ export default function CupomDetalhesScreen() {
     );
   }
 
+  const handleAddToCart = () => {
+    console.log('Usuário:', user);
+    console.log('Enviando p/ carrinho:', {
+      usuario_id: user?.id,
+      cupom_id: cupom.id,
+    });
+
+    axios
+      .post(`${API_URL}/carrinho`, {
+        usuario_id: user?.id,
+        cupom_id: cupom.id,
+      })
+      .then(() => {
+        Alert.alert('Sucesso', 'Cupom adicionado ao carrinho!');
+      })
+      .catch(error => {
+        console.error('Erro ao adicionar ao carrinho:', error);
+        Alert.alert('Erro', 'Não foi possível adicionar ao carrinho.');
+      });
+  };
+
   return (
-    <ScrollView style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <Header/>
+      <ScrollView>
       <Image
-        source={{ uri: cupom.imagem || 'https://via.placeholder.com/400x200.png?text=Cupom' }}
+        source={{ uri: cupom.imagem_url || 'https://via.placeholder.com/400x200.png?text=Cupom' }}
         style={styles.image}
       />
 
       <View style={styles.content}>
         <Text style={styles.titulo}>{cupom.titulo}</Text>
+              {/* Avaliações - Mock Data */}
+        <View style={styles.avaliacoes}>
+          <Text style={styles.estrelas}>⭐⭐⭐⭐⭐</Text>
+          <Text style={styles.numAvaliacoes}> (23 avaliações)</Text>
+        </View>
+
         <Text style={styles.descricao}>{cupom.descricao}</Text>
 
         <View style={styles.precoContainer}>
-          <Text style={styles.precoOriginal}>de R$ {parseFloat(cupom.valor_original).toFixed(2)}</Text>
-          <Text style={styles.precoDesconto}>por R$ {parseFloat(cupom.valor).toFixed(2)}</Text>
+          {cupom.valor_original && (
+            <Text style={styles.precoOriginal}>
+              de R$ {parseFloat(cupom.valor_original).toFixed(2)}
+            </Text>
+          )}
+          <Text style={styles.precoDesconto}>
+            por R$ {parseFloat(cupom.valor).toFixed(2)}
+          </Text>
         </View>
 
-        <Text style={styles.validade}>Válido até: {cupom.validade}</Text>
+        <Text style={styles.validade}>Válido até: {
+       formatDateBR(cupom.validade)}.
+        </Text>
 
-        <TouchableOpacity style={styles.botaoCarrinho}>
+        <TouchableOpacity style={styles.botaoCarrinho} onPress={handleAddToCart}>
           <Text style={styles.textoBotao}>Adicionar ao Carrinho</Text>
         </TouchableOpacity>
       </View>
-    </ScrollView>
+       </ScrollView>
+      <Rodape/>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
+  },
+    avaliacoes: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
   },
   image: {
     width: '100%',
