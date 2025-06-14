@@ -213,3 +213,102 @@ app.put('/usuarios/alterar-senha/:id', (req, res) => {
     });
   });
 });
+
+//POST - ADD FAVORITOS 
+app.post('/favoritos', (req, res) => {
+  const { usuario_id, cupom_id } = req.body;
+
+  const verificarSQL = 'SELECT * FROM favoritos WHERE usuario_id = ? AND cupom_id = ?';
+  db.query(verificarSQL, [usuario_id, cupom_id], (err, results) => {
+    if (err) return res.status(500).json({ erro: 'Erro ao verificar favoritos' });
+
+    if (results.length > 0) {
+      return res.status(409).json({ mensagem: 'Cupom já está nos favoritos' });
+    }
+
+    const inserirSQL = 'INSERT INTO favoritos (usuario_id, cupom_id) VALUES (?, ?)';
+    db.query(inserirSQL, [usuario_id, cupom_id], (err) => {
+      if (err) return res.status(500).json({ erro: 'Erro ao adicionar aos favoritos' });
+      res.status(201).json({ mensagem: 'Adicionado aos favoritos' });
+    });
+  });
+});
+
+
+//GET - LISTAR FAVORITOS
+app.get('/favoritos/:usuario_id', (req, res) => {
+  const { usuario_id } = req.params;
+
+  const query = `
+    SELECT c.*
+    FROM favoritos f
+    JOIN cupons c ON f.cupom_id = c.id
+    WHERE f.usuario_id = ?
+  `;
+
+  db.query(query, [usuario_id], (err, resultados) => {
+    if (err) {
+      console.error('Erro ao buscar favoritos:', err);
+      return res.status(500).json({ erro: 'Erro ao buscar favoritos' });
+    }
+
+    res.json(resultados);
+  });
+});
+
+//DELETE - REMOVER DOS FAVORITOS
+app.delete('/favoritos/:usuario_id/:cupom_id', (req, res) => {
+  const { usuario_id, cupom_id } = req.params;
+
+  const sql = 'DELETE FROM favoritos WHERE usuario_id = ? AND cupom_id = ?';
+  db.query(sql, [usuario_id, cupom_id], (err, result) => {
+    if (err) {
+      console.error('Erro ao remover favorito:', err);
+      return res.status(500).json({ erro: 'Erro ao remover favorito' });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ erro: 'Favorito não encontrado' });
+    }
+    res.json({ mensagem: 'Favorito removido com sucesso' });
+  });
+});
+
+// GET Buscar vouchers do usuário
+app.get('/vouchers/:usuario_id', (req, res) => {
+  const { usuario_id } = req.params;
+
+  const sql = `
+    SELECT v.*, c.titulo, c.descricao, c.valor, c.imagem_url
+    FROM vouchers v
+    JOIN cupons c ON v.cupom_id = c.id
+    WHERE v.usuario_id = ?
+  `;
+
+  db.query(sql, [usuario_id], (err, results) => {
+    if (err) {
+      console.error('Erro ao buscar vouchers:', err);
+      return res.status(500).json({ erro: 'Erro interno ao buscar vouchers' });
+    }
+    res.json(results);
+  });
+});
+
+// GET -- Buscar vouchers do usuário
+app.get('/vouchers/:usuario_id', (req, res) => {
+  const { usuario_id } = req.params;
+
+  const sql = `
+    SELECT v.*, c.titulo, c.descricao, c.valor, c.imagem_url
+    FROM vouchers v
+    JOIN cupons c ON v.cupom_id = c.id
+    WHERE v.usuario_id = ?
+  `;
+
+  db.query(sql, [usuario_id], (err, results) => {
+    if (err) {
+      console.error('Erro ao buscar vouchers:', err);
+      return res.status(500).json({ erro: 'Erro interno ao buscar vouchers' });
+    }
+    res.json(results);
+  });
+});

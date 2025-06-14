@@ -72,14 +72,16 @@ const handleLogin = async () => {
 </TouchableOpacity>
 
       {/* Links - A FAZER TODOS */}
-      <TouchableOpacity onPress={() => {/* esqueci senha - a fazer */}}>
-        <Text style={styles.link}>Esqueci minha senha</Text>
-      </TouchableOpacity>
+<TouchableOpacity onPress={() => navigation.navigate('EsqueciSenha')}>
+  <Text style={styles.link}>Esqueci minha senha</Text>
+</TouchableOpacity>
+
       <TouchableOpacity onPress={() => navigation.navigate('Cadastro')}>
         
         
         <Text style={[styles.link, { marginTop: 10 }]}>Cadastrar</Text>
       </TouchableOpacity>
+      
     </View>
   );
 }

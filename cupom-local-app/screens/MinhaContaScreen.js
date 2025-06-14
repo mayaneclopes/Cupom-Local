@@ -31,7 +31,7 @@ if (!user) return null;
   const handleButtonPress = (screenName) => {
     console.log(`Ir para ${screenName}`);
     // Add a navegação real 
-    //   // navigation.navigate(screenName);
+    navigation.navigate(screenName);
   };
 
   return (
@@ -56,13 +56,12 @@ if (!user) return null;
       {/* Seção Minhas Compras */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Minhas Compras</Text>
-        
         <TouchableOpacity 
-          style={styles.button}
-          onPress={() => handleButtonPress('Favoritos')}
-        >
-          <Text style={styles.buttonText}>❤️ Meus Favoritos</Text>
-        </TouchableOpacity>
+  style={styles.button}
+  onPress={() => navigation.navigate('Favoritos')}
+>
+  <Text style={styles.buttonText}>❤️ Meus Favoritos</Text>
+</TouchableOpacity>
 
         <TouchableOpacity 
           style={styles.button}

@@ -10,6 +10,10 @@ import CupomListScreen from './screens/CupomListScreen';
 import CarrinhoScreen from './screens/CarrinhoScreen';
 import MinhaContaScreen from './screens/MinhaContaScreen';
 import CupomDetalhesScreen from './screens/CupomDetalhesScreen';
+import EsqueciSenhaScreen from './screens/EsqueciSenhaScreen';
+import FavoritosScreen from './screens/FavoritosScreen';
+import VouchersScreen from './screens/VouchersScreen';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -41,6 +45,12 @@ export default function App() {
               {props => <LoginFakeScreen {...props} onLogin={setUser} />}
             </Stack.Screen>
             <Stack.Screen name="Cadastro" component={RegisterScreen} />
+                <Stack.Screen
+                name="EsqueciSenha"
+                component={EsqueciSenhaScreen}
+                options={{ headerShown: false }}
+              />
+
           </>
         ) : (
           <>
@@ -69,6 +79,12 @@ export default function App() {
                   component={CupomDetalhesScreen}
                   options={{ title: 'Detalhes do Cupom' }}
                 />
+                      <Stack.Screen name="Favoritos">
+  {props => <FavoritosScreen {...props} user={user} />}
+</Stack.Screen>
+              <Stack.Screen name="Vouchers" options={{ headerShown: false }}>
+  {props => <VouchersScreen {...props} user={user} />}
+</Stack.Screen>
             <Stack.Screen name="MinhaConta">
               {props => (
                 <MinhaContaScreen

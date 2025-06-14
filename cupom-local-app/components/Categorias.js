@@ -11,7 +11,7 @@ import {
 
 export default function Categorias() {
   const categorias = [
-    { icon: require('../assets/frame.png'), label: 'Restaurantes' },
+    { icon: require('../assets/frame.png'), label: 'Alimentação' },
     { icon: require('../assets/skin-care.png'), label: 'Estética' },
     { icon: require('../assets/shop.png'), label: 'Lojas' },
     { icon: require('../assets/Pets.png'), label: 'Pets' },

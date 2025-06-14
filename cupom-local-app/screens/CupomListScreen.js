@@ -59,6 +59,24 @@ onPress={() => navigation.navigate('CupomDetalhes', { cupom, user })}
     >
       <Image source={require('../assets/bag.png')} style={styles.bagIcon} />
     </TouchableOpacity>
+    {/*bOTÃO FAVORITOS*/ }
+    <TouchableOpacity
+  style={styles.favoriteButton}
+  onPress={() => {
+    axios.post(`${API_URL}/Favoritos`, {
+      usuario_id: user.id,
+      cupom_id: cupom.id,
+    })
+    .then(() => {
+      console.log('Cupom adicionado aos favoritos!');
+    })
+    .catch(error => {
+      console.error('Erro ao favoritar:', error);
+    });
+  }}
+>
+  <Image source={require('../assets/heart.png')} style={styles.bagIcon} />
+</TouchableOpacity>
   </View>
 );
 
