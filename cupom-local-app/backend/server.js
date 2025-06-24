@@ -273,42 +273,67 @@ app.delete('/favoritos/:usuario_id/:cupom_id', (req, res) => {
   });
 });
 
-// GET Buscar vouchers do usuário
+// GET Buscar vouchers do usuário / status
 app.get('/vouchers/:usuario_id', (req, res) => {
   const { usuario_id } = req.params;
+  const { status } = req.query; // Novo parâmetro opcional
 
-  const sql = `
+  let sql = `
     SELECT v.*, c.titulo, c.descricao, c.valor, c.imagem_url
     FROM vouchers v
     JOIN cupons c ON v.cupom_id = c.id
     WHERE v.usuario_id = ?
   `;
 
-  db.query(sql, [usuario_id], (err, results) => {
+  const params = [usuario_id];
+
+  if (status) {
+    sql += ' AND v.status = ?';
+    params.push(status);
+  }
+
+  db.query(sql, params, (err, results) => {
     if (err) {
       console.error('Erro ao buscar vouchers:', err);
-      return res.status(500).json({ erro: 'Erro interno ao buscar vouchers' });
+      return res.status(500).json({ erro: 'Erro interno' });
     }
     res.json(results);
   });
 });
 
-// GET -- Buscar vouchers do usuário
-app.get('/vouchers/:usuario_id', (req, res) => {
-  const { usuario_id } = req.params;
+//POST -- AVALIAÇÕES
+app.post('/avaliacoes', (req, res) => {
+  const { usuario_id, cupom_id, nota, comentario } = req.body;
+
+  if (!usuario_id || !cupom_id || !nota || !comentario) {
+    return res.status(400).json({ erro: 'Dados incompletos' });
+  }
 
   const sql = `
-    SELECT v.*, c.titulo, c.descricao, c.valor, c.imagem_url
-    FROM vouchers v
-    JOIN cupons c ON v.cupom_id = c.id
-    WHERE v.usuario_id = ?
+    INSERT INTO avaliacoes (usuario_id, cupom_id, nota, comentario)
+    VALUES (?, ?, ?, ?)
   `;
 
-  db.query(sql, [usuario_id], (err, results) => {
+  db.query(sql, [usuario_id, cupom_id, nota, comentario], (err) => {
     if (err) {
-      console.error('Erro ao buscar vouchers:', err);
-      return res.status(500).json({ erro: 'Erro interno ao buscar vouchers' });
+      if (err.code === 'ER_DUP_ENTRY') {
+        return res.status(409).json({ erro: 'Avaliação já enviada' });
+      }
+      return res.status(500).json({ erro: 'Erro ao salvar avaliação' });
     }
-    res.json(results);
+
+    res.status(201).json({ mensagem: 'Avaliação salva com sucesso' });
+  });
+});
+
+// GET - Avaliações por usuário
+app.get('/avaliacoes', (req, res) => {
+  const { usuario_id } = req.query;
+  if (!usuario_id) return res.status(400).json({ erro: 'usuario_id é obrigatório' });
+
+  const sql = 'SELECT * FROM avaliacoes WHERE usuario_id = ?';
+  db.query(sql, [usuario_id], (err, resultados) => {
+    if (err) return res.status(500).json({ erro: 'Erro ao buscar avaliações' });
+    res.json(resultados);
   });
 });

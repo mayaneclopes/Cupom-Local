@@ -24,7 +24,7 @@ export default function VouchersScreen({ user }) {
         <Text style={styles.title}>{item.titulo}</Text>
         <Text style={styles.descricao}>{item.descricao}</Text>
         <Text style={styles.status}>Status: {item.status}</Text>
-        <Text style={styles.data}>Resgatado em: {new Date(item.data_resgate).toLocaleDateString()}</Text>
+        <Text style={styles.data}>Adquirido em: {new Date(item.data_resgate).toLocaleDateString()}</Text>
       </View>
     </View>
   );
@@ -33,7 +33,6 @@ export default function VouchersScreen({ user }) {
     
         <SafeAreaView style={styles.container}>
       <Header />
-      <ScrollView>
       <Text style={styles.pageTitle}>Meus Vouchers</Text>
 
       {vouchers.length === 0 ? (
@@ -46,7 +45,6 @@ export default function VouchersScreen({ user }) {
           contentContainerStyle={styles.list}
         />
       )}
-</ScrollView>
       <Rodape />
       </SafeAreaView>
     

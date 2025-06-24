@@ -33,7 +33,8 @@ const navigation = useNavigation();
         <Text style={styles.label}>Busca</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.item}>
+      <TouchableOpacity style={styles.item}
+          onPress={() => navigation.navigate('Cupons')}>
         <Image source={require('../assets/logo-mini.png')} style={styles.icon} />
         <Text style={styles.label}>Ofertas</Text>
       </TouchableOpacity>
@@ -70,7 +71,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: 65,
     backgroundColor: '#f3f3f3',
-    
+    position: 'fixed',
+    bottom: 0,
   },
   item: {
     alignItems: 'center',

@@ -13,7 +13,8 @@ import CupomDetalhesScreen from './screens/CupomDetalhesScreen';
 import EsqueciSenhaScreen from './screens/EsqueciSenhaScreen';
 import FavoritosScreen from './screens/FavoritosScreen';
 import VouchersScreen from './screens/VouchersScreen';
-
+import AvaliarOfertasScreen from './screens/AvaliarOfertaScreen';
+import AvaliarCupomScreen from './screens/AvaliarCupomScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -79,6 +80,13 @@ export default function App() {
                   component={CupomDetalhesScreen}
                   options={{ title: 'Detalhes do Cupom' }}
                 />
+                <Stack.Screen
+  name="AvaliarOfertas"
+  component={AvaliarOfertasScreen}
+  options={{ title: 'Avaliar Ofertas', headerShown: false }}
+/>
+<Stack.Screen name="AvaliarCupom" component={AvaliarCupomScreen} />
+
                       <Stack.Screen name="Favoritos">
   {props => <FavoritosScreen {...props} user={user} />}
 </Stack.Screen>
