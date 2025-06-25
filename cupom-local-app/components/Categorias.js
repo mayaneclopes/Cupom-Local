@@ -6,22 +6,32 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-
-//Atenção: usar onPress={() => ...} p/ rotas futuras
+import { useNavigation } from '@react-navigation/native';
 
 export default function Categorias() {
+  const navigation = useNavigation();
+
   const categorias = [
-    { icon: require('../assets/frame.png'), label: 'Alimentação' },
-    { icon: require('../assets/skin-care.png'), label: 'Estética' },
-    { icon: require('../assets/shop.png'), label: 'Lojas' },
-    { icon: require('../assets/Pets.png'), label: 'Pets' },
-    { icon: require('../assets/frame-2.png'), label: 'Outros' },
+    { id: 1, icon: require('../assets/frame.png'), label: 'Alimentação' },
+    { id: 2, icon: require('../assets/skin-care.png'), label: 'Estética' },
+    { id: 3, icon: require('../assets/shop.png'), label: 'Lojas' },
+    { id: 4, icon: require('../assets/Pets.png'), label: 'Pets' },
+    { id: 5, icon: require('../assets/frame-2.png'), label: 'Outros' },
   ];
 
   return (
     <View style={styles.categorias}>
       {categorias.map((cat, index) => (
-        <TouchableOpacity key={index} style={styles.categoria}>
+        <TouchableOpacity
+          key={index}
+          style={styles.categoria}
+          onPress={() =>
+            navigation.navigate('CuponsPorCategoria', {
+              categoriaId: cat.id,
+              nomeCategoria: cat.label,
+            })
+          }
+        >
           <View style={styles.iconCircle}>
             <Image source={cat.icon} style={styles.catIcon} />
           </View>

@@ -15,6 +15,7 @@ import FavoritosScreen from './screens/FavoritosScreen';
 import VouchersScreen from './screens/VouchersScreen';
 import AvaliarOfertasScreen from './screens/AvaliarOfertaScreen';
 import AvaliarCupomScreen from './screens/AvaliarCupomScreen';
+import CuponsPorCategoriaScreen from './screens/CuponsPorCategoriaScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -93,6 +94,11 @@ export default function App() {
               <Stack.Screen name="Vouchers" options={{ headerShown: false }}>
   {props => <VouchersScreen {...props} user={user} />}
 </Stack.Screen>
+        <Stack.Screen 
+          name="CuponsPorCategoria" 
+          component={CuponsPorCategoriaScreen} 
+          
+        />
             <Stack.Screen name="MinhaConta">
               {props => (
                 <MinhaContaScreen

@@ -301,6 +301,26 @@ app.get('/vouchers/:usuario_id', (req, res) => {
   });
 });
 
+// GET- busca cupons por cat
+app.get('/cupons/categoria/:id', (req, res) => {
+  const categoriaId = req.params.id;
+
+  const sql = `
+    SELECT c.* 
+    FROM cupons c
+    JOIN categorias cat ON c.categoria = cat.nome
+    WHERE cat.id = ?
+  `;
+
+  db.query(sql, [categoriaId], (err, results) => {
+    if (err) {
+      console.error('Erro ao buscar cupons por categoria:', err);
+      return res.status(500).json({ erro: 'Erro ao buscar cupons por categoria' });
+    }
+    res.json(results);
+  });
+});;
+
 //POST -- AVALIAÇÕES
 app.post('/avaliacoes', (req, res) => {
   const { usuario_id, cupom_id, nota, comentario } = req.body;
